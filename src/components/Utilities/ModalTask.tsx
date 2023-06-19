@@ -62,6 +62,8 @@ const ModalCreateTask: React.FC<{
   });
   const [date, setDate] = useState<string>(() => {
     if (task) {
+      console.log(task);
+      
       return task.date;
     }
     return todayDate;
@@ -95,7 +97,6 @@ const ModalCreateTask: React.FC<{
 
     isTitleValid.current = title.trim().length > 0;
     isDateValid.current = date.trim().length > 0;
-
     if (isTitleValid.current && isDateValid.current) {
       const newTask: Task = {
         title: title,
@@ -134,9 +135,13 @@ const ModalCreateTask: React.FC<{
             className="w-full"
             value={date}
             required
-            onChange={({ target }) => setDate(target.value)}
-            min={todayDate}
-            max={maxDate}
+            onChange={({ target }) => {
+              console.log(target.value);
+              
+              setDate(target.value)
+            }}
+            // min={todayDate}
+            // max={maxDate}
           />
         </label>
         <label>

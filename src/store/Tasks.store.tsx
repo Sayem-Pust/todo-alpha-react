@@ -9,13 +9,63 @@ import {
 import axios from "axios";
 import { Task } from "../interfaces";
 
-export const getPostList: any = createAsyncThunk("post/postList", async (userData, { rejectWithValue }) => {
+export const getPostList: any = createAsyncThunk("post/postList", async (postData, { rejectWithValue }) => {
   try {
      const { data } = await axios.get(`http://127.0.0.1:8000/api/post/list/`);
      return data;
   } catch (err:any) {
     return rejectWithValue(err.message);
   }
+});
+
+export const getDirectoryList: any = createAsyncThunk("post/directoryList", async (postData, { rejectWithValue }) => {
+  try {
+     const { data } = await axios.get(
+       `http://127.0.0.1:8000/api/post/directory/`
+     );
+     return data;
+  } catch (err:any) {
+    return rejectWithValue(err.message);
+  }
+});
+
+export const postData:any = createAsyncThunk("postData", async (data, thunkAPI) => {
+  const response: any = await axios
+    .post(`http://127.0.0.1:8000/api/post/list/`, data)
+    .then(function (response) {
+      console.log(response);
+      getPostList();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return response.data;
+});
+
+export const editPostData:any = createAsyncThunk("postData", async (data:any, thunkAPI) => {
+  const response: any = await axios
+    .patch(`http://127.0.0.1:8000/api/post/list/${data.id}/`, data)
+    .then(function (response) {
+      console.log(response);
+      getPostList();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return response.data;
+});
+
+export const deletePostData:any = createAsyncThunk("postData", async (id, thunkAPI) => {
+  const response: any = await axios
+    .delete(`http://127.0.0.1:8000/api/post/list/${id}/`)
+    .then(function (response) {
+      console.log(response);
+      getPostList();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  return response.data;
 });
 
 const defaultTasks: Task[] = [
@@ -75,6 +125,12 @@ const getSavedDirectories = (): string[] => {
   return dirList;
 };
 
+const getTestDirList = (data:any): string[] => {
+  let dirList: string[] = [];
+  data.map((dir: any) => dirList.push(dir.dir));
+  return dirList;
+}
+
 const initialState: {
   tasks: Task[];
   directories: string[];
@@ -91,6 +147,9 @@ const tasksSlice = createSlice({
   extraReducers: {
     [getPostList.fulfilled]: (state, { payload }) => {
       state.tasks = payload;
+    },
+    [getDirectoryList.fulfilled]: (state, { payload }) => {
+      state.directories = getTestDirList(payload);
     },
   },
   reducers: {

@@ -8,6 +8,7 @@ const ContentDirectories: React.FC<{ classActive: string }> = ({
   classActive,
 }) => {
   const directories = useAppSelector((store) => store.tasks.directories);
+  
   const [modalDirIsShown, setModalDirIsShown] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
